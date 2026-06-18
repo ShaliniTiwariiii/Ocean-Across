@@ -15,7 +15,7 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
   onAddressModalToggle,
 }) => {
   const { currentStep } = useAuthStore();
-  const isOnboarding = ['splash', 'welcome', 'login', 'signup', 'otp', 'location'].includes(currentStep);
+  const isOnboarding = ['splash', 'welcome', 'signin-selection', 'login', 'signup', 'otp', 'location'].includes(currentStep);
 
   if (isOnboarding) {
     return (

@@ -5,6 +5,7 @@ import { useAuthStore } from './stores/authStore';
 // Onboarding Pages
 import Splash from './pages/Onboarding/Splash';
 import Welcome from './pages/Onboarding/Welcome';
+import SignInSelection from './pages/Onboarding/SignInSelection';
 import Login from './pages/Onboarding/Login';
 import SignUp from './pages/Onboarding/SignUp';
 import OTP from './pages/Onboarding/OTP';
@@ -32,13 +33,14 @@ function App() {
   const [cartOpen, setCartOpen] = useState(false);
   const [addressOpen, setAddressOpen] = useState(false);
 
-  // Switch based on onboarding step
   const renderOnboarding = () => {
     switch (currentStep) {
       case 'splash':
         return <Splash />;
       case 'welcome':
         return <Welcome />;
+      case 'signin-selection':
+        return <SignInSelection />;
       case 'login':
         return <Login />;
       case 'signup':

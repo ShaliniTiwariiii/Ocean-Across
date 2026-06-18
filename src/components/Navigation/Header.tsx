@@ -5,6 +5,7 @@ import { useCartStore } from '../../stores/cartStore';
 import { useProductStore } from '../../stores/productStore';
 import { useLocationStore } from '../../stores/locationStore';
 import { useAuthStore } from '../../stores/authStore';
+import NectarLogo from '../UI/NectarLogo';
 
 interface HeaderProps {
   onCartToggle?: () => void;
@@ -35,14 +36,8 @@ const Header: React.FC<HeaderProps> = ({ onCartToggle, onAddressModalToggle }) =
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-6">
         
         {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="bg-brand-600 text-white p-2 rounded-xl group-hover:bg-brand-700 transition-colors">
-            <ShoppingCart className="w-6 h-6 stroke-[2.5]" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-extrabold text-xl leading-none text-brand-600 tracking-tight">Ocean</span>
-            <span className="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Across</span>
-          </div>
+        <Link to="/" className="hover:opacity-90 active:scale-98 transition-all">
+          <NectarLogo size="sm" />
         </Link>
 
         {/* Location Selector */}

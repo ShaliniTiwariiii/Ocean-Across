@@ -9,10 +9,10 @@ interface AuthState {
   otpSent: boolean;
   verificationPhone: string;
   onboardingCompleted: boolean;
-  currentStep: 'splash' | 'welcome' | 'login' | 'signup' | 'otp' | 'location' | 'main';
+  currentStep: 'splash' | 'welcome' | 'signin-selection' | 'login' | 'signup' | 'otp' | 'location' | 'main';
   
   // Actions
-  setStep: (step: AuthState['currentStep']) => void;
+  setStep: (step: 'splash' | 'welcome' | 'signin-selection' | 'login' | 'signup' | 'otp' | 'location' | 'main') => void;
   sendOtp: (phone: string) => Promise<boolean>;
   verifyOtp: (otp: string) => Promise<boolean>;
   signUp: (name: string, email: string, phone: string) => Promise<boolean>;

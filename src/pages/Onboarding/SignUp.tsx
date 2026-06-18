@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, ArrowRight, Loader2, ShoppingBag } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
+import NectarLogo from '../../components/UI/NectarLogo';
 
 const SignUp: React.FC = () => {
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const { signUp, isLoading, error, setStep } = useAuthStore();
   const [localError, setLocalError] = useState<string | null>(null);
 
@@ -13,8 +15,8 @@ const SignUp: React.FC = () => {
     e.preventDefault();
     setLocalError(null);
 
-    if (!name.trim()) {
-      setLocalError('Please enter your name.');
+    if (!username.trim()) {
+      setLocalError('Please enter a username.');
       return;
     }
 
@@ -24,95 +26,103 @@ const SignUp: React.FC = () => {
       return;
     }
 
-    const cleanPhone = phone.replace(/\D/g, '');
-    if (cleanPhone.length < 10) {
-      setLocalError('Please enter a valid 10-digit mobile number.');
+    if (password.length < 6) {
+      setLocalError('Password must be at least 6 characters long.');
       return;
     }
 
-    const success = await signUp(name.trim(), email.trim(), cleanPhone);
-    if (!success) {
-      // Managed in authStore error
+    // Mock Signup: advance to OTP Verification
+    const success = await signUp(username.trim(), email.trim(), '1712345678');
+    if (success) {
+      // Step advanced to otp inside authStore
     }
   };
 
   return (
     <div className="flex-1 flex flex-col justify-between bg-white h-full animate-fade-in p-6 overflow-y-auto no-scrollbar">
       
-      {/* Brand Header */}
-      <div className="flex flex-col items-center text-center pt-4">
-        <div className="bg-brand-50 text-brand-600 p-3 rounded-[20px] mb-3">
-          <ShoppingBag className="w-8 h-8 stroke-[2.5]" />
-        </div>
-        <h2 className="text-2xl font-extrabold text-slate-800">Create Account</h2>
-        <p className="text-xs text-slate-400 mt-1 font-semibold">Join Ocean and get fresh groceries delivered fast</p>
+      {/* Top Carrot Logo */}
+      <div className="flex justify-center pt-4 shrink-0">
+        <NectarLogo onlyCarrot={true} size="md" />
       </div>
 
-      {/* Sign Up Form */}
-      <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-center gap-4 my-6">
-        {/* Name input */}
-        <div>
-          <label htmlFor="name" className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-            Full Name
+      {/* Form Area */}
+      <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-center gap-4 my-4">
+        {/* Title Block */}
+        <div className="text-left mb-1">
+          <h2 className="text-2xl font-black text-slate-800">Sign Up</h2>
+          <p className="text-xs text-slate-400 font-bold mt-1">Enter your credentials to continue</p>
+        </div>
+
+        {/* Username */}
+        <div className="flex flex-col gap-1 border-b border-slate-100 pb-1.5">
+          <label htmlFor="username" className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            Username
           </label>
-          <div className="relative">
+          <input
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Ahad"
+            disabled={isLoading}
+            className="w-full bg-transparent outline-none text-sm font-semibold text-slate-800 py-1"
+          />
+        </div>
+
+        {/* Email */}
+        <div className="flex flex-col gap-1 border-b border-slate-100 pb-1.5">
+          <label htmlFor="email" className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="example@gmail.com"
+            disabled={isLoading}
+            className="w-full bg-transparent outline-none text-sm font-semibold text-slate-800 py-1"
+          />
+        </div>
+
+        {/* Password */}
+        <div className="flex flex-col gap-1 border-b border-slate-100 pb-1.5 relative">
+          <label htmlFor="password" className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            Password
+          </label>
+          <div className="flex items-center justify-between gap-2">
             <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="John Doe"
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
               disabled={isLoading}
-              className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none text-sm font-semibold transition-all"
+              className="flex-1 bg-transparent outline-none text-sm font-semibold text-slate-800 py-1 pr-8"
             />
-            <User className="w-5 h-5 text-slate-400 absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={isLoading}
+              className="text-slate-400 hover:text-slate-650 absolute right-1"
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
         </div>
 
-        {/* Email input */}
-        <div>
-          <label htmlFor="email" className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-            Email Address
-          </label>
-          <div className="relative">
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="john@example.com"
-              disabled={isLoading}
-              className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none text-sm font-semibold transition-all"
-            />
-            <Mail className="w-5 h-5 text-slate-400 absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-          </div>
+        {/* Terms of Service agreement */}
+        <div className="text-left mt-1 text-[11px] leading-relaxed font-semibold text-slate-400">
+          By continuing you agree to our{' '}
+          <button type="button" className="text-brand-500 hover:underline">Terms of Service</button>
+          {' '}and{' '}
+          <button type="button" className="text-brand-500 hover:underline">Privacy Policy</button>.
         </div>
 
-        {/* Phone input */}
-        <div>
-          <label htmlFor="phone" className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-            Mobile Number
-          </label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-bold text-sm">
-              +1
-            </span>
-            <input
-              id="phone"
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder=" (555) 000-0000"
-              disabled={isLoading}
-              className="w-full pl-10 pr-10 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none text-sm font-semibold transition-all"
-            />
-            <Phone className="w-5 h-5 text-slate-400 absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-          </div>
-        </div>
-
-        {/* Error Alerts */}
+        {/* Local/Global errors */}
         {(localError || error) && (
-          <div className="bg-rose-50 border border-rose-100 text-rose-600 px-4 py-2.5 rounded-xl text-xs font-semibold animate-fade-in">
+          <div className="bg-rose-50 border border-rose-100 text-rose-600 px-4 py-2.5 rounded-xl text-xs font-semibold animate-fade-in text-center">
             {localError || error}
           </div>
         )}
@@ -120,33 +130,30 @@ const SignUp: React.FC = () => {
         {/* Submit */}
         <button
           type="submit"
-          disabled={isLoading || !name || !email || !phone}
-          className="w-full mt-2 bg-brand-600 hover:bg-brand-700 disabled:bg-slate-200 disabled:shadow-none text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-100 transition-all active:scale-95"
+          disabled={isLoading || !username || !email || !password}
+          className="w-full bg-brand-500 hover:bg-brand-600 disabled:bg-slate-200 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-100 transition-all active:scale-95 mt-1"
         >
           {isLoading ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              <span>Creating Account...</span>
+              <span>Signing Up...</span>
             </>
           ) : (
-            <>
-              <span>Sign Up</span>
-              <ArrowRight className="w-5 h-5" />
-            </>
+            <span>Sign Up</span>
           )}
         </button>
       </form>
 
-      {/* Switch Screen Link */}
-      <div className="pb-2 text-center">
+      {/* Login link footer */}
+      <div className="pb-2 text-center shrink-0">
         <p className="text-sm text-slate-400 font-medium">
           Already have an account?{' '}
           <button
             onClick={() => setStep('login')}
             disabled={isLoading}
-            className="text-brand-600 hover:text-brand-700 font-bold hover:underline transition-colors"
+            className="text-brand-500 hover:text-brand-600 font-extrabold transition-colors hover:underline"
           >
-            Login
+            Sign In
           </button>
         </p>
       </div>

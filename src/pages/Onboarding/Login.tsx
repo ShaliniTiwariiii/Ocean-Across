@@ -1,100 +1,141 @@
 import React, { useState } from 'react';
-import { Phone, ArrowRight, Loader2, ShoppingBag } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
+import NectarLogo from '../../components/UI/NectarLogo';
 
 const Login: React.FC = () => {
-  const [phone, setPhone] = useState('');
-  const { sendOtp, isLoading, error, setStep } = useAuthStore();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const { verifyOtp, isLoading, error, setStep } = useAuthStore();
   const [localError, setLocalError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError(null);
 
-    // Basic Validation
-    const cleanPhone = phone.replace(/\D/g, '');
-    if (cleanPhone.length < 10) {
-      setLocalError('Please enter a valid 10-digit mobile number.');
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setLocalError('Please enter a valid email address.');
       return;
     }
 
-    const success = await sendOtp(cleanPhone);
-    if (!success) {
-      // Errors will be managed globally in store, but we can log
+    if (password.length < 6) {
+      setLocalError('Password must be at least 6 characters long.');
+      return;
+    }
+
+    // Authenticate: Since it's a frontend mock, we verify by advancing to OTP verification step
+    // using the phone number associated or mock phone number
+    const success = await verifyOtp('123456');
+    if (success) {
+      // Step advanced to next (main or location) inside authStore
     }
   };
 
   return (
     <div className="flex-1 flex flex-col justify-between bg-white h-full animate-fade-in p-6">
       
-      {/* Top Brand Block */}
-      <div className="flex flex-col items-center text-center pt-8">
-        <div className="bg-brand-50 text-brand-600 p-4 rounded-[24px] mb-4">
-          <ShoppingBag className="w-10 h-10 stroke-[2.5]" />
-        </div>
-        <h2 className="text-2xl font-extrabold text-slate-800">Welcome Back</h2>
-        <p className="text-sm text-slate-400 mt-1 font-semibold">Sign in to order your daily fresh groceries</p>
+      {/* Top Carrot Logo */}
+      <div className="flex justify-center pt-8">
+        <NectarLogo onlyCarrot={true} size="md" />
       </div>
 
-      {/* Main Login Form */}
-      <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-center gap-6 my-6">
-        <div>
-          <label htmlFor="phone" className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-            Mobile Number
+      {/* Main Form Area */}
+      <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-center gap-5 my-6">
+        {/* Title Block */}
+        <div className="text-left mb-2">
+          <h2 className="text-2xl font-black text-slate-800">Login</h2>
+          <p className="text-xs text-slate-400 font-bold mt-1.5">Enter your emails and password</p>
+        </div>
+
+        {/* Email input field */}
+        <div className="flex flex-col gap-1.5 border-b border-slate-100 pb-2">
+          <label htmlFor="email" className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            Email
           </label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-bold text-sm">
-              +1
-            </span>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="example@gmail.com"
+            disabled={isLoading}
+            className="w-full bg-transparent outline-none text-sm font-semibold text-slate-800 focus:border-brand-500 py-1.5"
+          />
+        </div>
+
+        {/* Password input field */}
+        <div className="flex flex-col gap-1.5 border-b border-slate-100 pb-2 relative">
+          <label htmlFor="password" className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            Password
+          </label>
+          <div className="flex items-center justify-between gap-2">
             <input
-              id="phone"
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder=" (555) 000-0000"
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
               disabled={isLoading}
-              className="w-full pl-10 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none text-sm font-semibold transition-all"
+              className="flex-1 bg-transparent outline-none text-sm font-semibold text-slate-855 focus:border-brand-500 py-1.5 pr-8"
             />
-            <Phone className="w-5 h-5 text-slate-400 absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={isLoading}
+              className="text-slate-400 hover:text-slate-600 focus:outline-none absolute right-1"
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
         </div>
 
-        {/* Error Message display */}
+        {/* Forgot Password action */}
+        <div className="flex justify-end -mt-2">
+          <button
+            type="button"
+            className="text-xs font-bold text-slate-700 hover:text-brand-600 transition-colors"
+          >
+            Forgot Password?
+          </button>
+        </div>
+
+        {/* Local/Global error banner */}
         {(localError || error) && (
-          <div className="bg-rose-50 border border-rose-100 text-rose-600 px-4 py-3 rounded-xl text-xs font-semibold animate-fade-in">
+          <div className="bg-rose-50 border border-rose-100 text-rose-600 px-4 py-2.5 rounded-xl text-xs font-semibold animate-fade-in text-center">
             {localError || error}
           </div>
         )}
 
+        {/* Submit */}
         <button
           type="submit"
-          disabled={isLoading || !phone}
-          className="w-full bg-brand-600 hover:bg-brand-700 disabled:bg-slate-200 disabled:shadow-none text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-100 transition-all active:scale-95"
+          disabled={isLoading || !email || !password}
+          className="w-full bg-brand-500 hover:bg-brand-600 disabled:bg-slate-200 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-100 transition-all active:scale-95 mt-2"
         >
           {isLoading ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              <span>Sending OTP...</span>
+              <span>Logging In...</span>
             </>
           ) : (
-            <>
-              <span>Send Verification Code</span>
-              <ArrowRight className="w-5 h-5" />
-            </>
+            <span>Log In</span>
           )}
         </button>
       </form>
 
-      {/* Bottom Switch screen block */}
+      {/* Signup link footer */}
       <div className="pb-4 text-center">
         <p className="text-sm text-slate-400 font-medium">
           Don't have an account?{' '}
           <button
             onClick={() => setStep('signup')}
             disabled={isLoading}
-            className="text-brand-600 hover:text-brand-700 font-bold hover:underline transition-colors"
+            className="text-brand-500 hover:text-brand-600 font-extrabold transition-colors hover:underline"
           >
-            Create Account
+            Signup
           </button>
         </p>
       </div>

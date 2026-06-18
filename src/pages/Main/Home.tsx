@@ -5,6 +5,7 @@ import { CATEGORIES, PROMOTIONS } from '../../data/mockData';
 import { useProductStore } from '../../stores/productStore';
 import { useLocationStore } from '../../stores/locationStore';
 import ProductCard from '../../components/Product/ProductCard';
+import NectarLogo from '../../components/UI/NectarLogo';
 
 interface HomeProps {
   onAddressModalToggle?: () => void;
@@ -39,18 +40,19 @@ const Home: React.FC<HomeProps> = ({ onAddressModalToggle }) => {
     <div className="flex flex-col gap-6 pb-6 animate-fade-in">
       
       {/* Mobile Only: Top Address Selector & Search Bar */}
-      <div className="md:hidden flex flex-col gap-3">
+      <div className="md:hidden flex flex-col gap-3 items-center w-full">
+        {/* Center Carrot Logo */}
+        <NectarLogo onlyCarrot={true} size="sm" />
+        
         <button
           onClick={onAddressModalToggle}
-          className="flex items-center gap-1.5 text-left w-fit"
+          className="flex items-center justify-center gap-1 text-center"
         >
-          <MapPin className="w-5 h-5 text-brand-600 shrink-0" />
-          <div className="flex items-center gap-1">
-            <span className="text-sm font-bold text-slate-850 truncate max-w-[200px]">
-              {currentAddress || 'Select Delivery Location'}
-            </span>
-            <ChevronRight className="w-4 h-4 text-slate-400" />
-          </div>
+          <MapPin className="w-4 h-4 text-slate-600 shrink-0" />
+          <span className="text-xs font-bold text-slate-700">
+            {currentAddress ? currentAddress.split(',').slice(0, 2).join(',') : 'Select Delivery Location'}
+          </span>
+          <ChevronRight className="w-3.5 h-3.5 text-slate-450" />
         </button>
 
         <form onSubmit={handleSearchSubmit} className="relative">
