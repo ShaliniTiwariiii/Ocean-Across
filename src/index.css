@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply text-slate-800 bg-slate-50 antialiased selection:bg-brand-100 selection:text-brand-800;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* Global Keyboard Focus Indicators */
+  *:focus-visible {
+    outline: 2px solid #16a34a;
+    outline-offset: 2px;
+  }
+}
+
+/* Custom scrollbar hiding helper */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Custom styles for onboarding input boxes */
+.otp-input:focus {
+  @apply border-brand-500 ring-2 ring-brand-100 outline-none;
+}
+
+/* Slide up drawer animation styling */
+.drawer-transition {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
